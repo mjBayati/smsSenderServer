@@ -18,7 +18,7 @@ class RedisServices{
             //     "persistent" => "1",
             // ]);
             self::$client = new Predis\Client();
-            // self::$client->set('counter', 1);
+            self::$client->set('counter', 1);   
             self::$client->set('isCounterSeted', true);
             echo "client connected:\n";
         }catch(Predis\Connection\ConnectionException $exception){
@@ -30,10 +30,21 @@ class RedisServices{
     public static function addNewItem($newItem){
         try{
             self::$client = new Predis\Client();
-            // $value = self::$client->get('counter');
-            self::$client->rpush(self::$listName, $newItem);
-            // self::$client->incr('counter');
-            return self::$client->llen(self::$listName);            
+            // echo $newItem;
+
+            $tempResult = json_decode($newItem, true);
+
+
+            $value = self::$client->get('counter');
+            self::$client->incr('counter');
+
+
+            $tempResult = array_merge($tempResult,["id" => $value]);
+            
+            // echo json_encode($tempResult);
+            
+            self::$client->rpush(self::$listName, $tempResult);
+            return $tempResult;            
         }catch(Predis\Connection\ConnectionException $exception){
             echo $exception->getMessage();
         }

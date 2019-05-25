@@ -9,11 +9,12 @@ class PhonesData{
 
     // table columns
     public $id;
-    public $createdAt; 
+    public $number; 
+    public $status;
+    public $createdAt;
     public $updatedAt;
-    public $number;
-    public $location_id;
-    public $condition;
+    public $serviceHostPort;
+    public $bodyText;
 
     public function __construct($connection){
         $this->connection = $connection;
@@ -24,31 +25,34 @@ class PhonesData{
         // query to insert record
         $query = "INSERT INTO
             " . $this->table_name . "
-        SET
-        number=:number, condition=:condition, createdAt=:createdAt , updatedAt=:updatedAt, locationId=:locationId";
+        SET id=:id, 
+        number=:number, status=:status, createdAt=:createdAt , updatedAt=:updatedAt, serviceHostPort=:serviceHostPort, 
+        bodyText=:bodyText";
 
         // prepare query
-        $stmt = $this->conn->prepare($query);
+        $stmt = $this->connection->prepare($query);
 
-        // sanitize
-        $this->number=htmlspecialchars(strip_tags($this->number));
-        $this->condition=htmlspecialchars(strip_tags($this->condition));
-        $this->createdAt=htmlspecialchars(strip_tags($this->createdAt));
-        $this->updatedAt=htmlspecialchars(strip_tags($this->updatedAt));
-        $this->locationId=htmlspecialchars(strip_tags($this->locationId));
+        // // sanitize
+        // $this->id=htmlspecialchars(strip_tags($this->number));
+        // $this->number=htmlspecialchars(strip_tags($this->number));
+        // $this->condition=htmlspecialchars(strip_tags($this->condition));
+        // $this->createdAt=htmlspecialchars(strip_tags($this->createdAt));
+        // $this->updatedAt=htmlspecialchars(strip_tags($this->updatedAt));
+        // $this->locationId=htmlspecialchars(strip_tags($this->locationId));
 
         // bind values
+        $stmt->bindParam(":id", $this->id);
         $stmt->bindParam(":number", $this->number);
-        $stmt->bindParam(":condition", $this->condition);
+        $stmt->bindParam(":status", $this->status);
         $stmt->bindParam(":createdAt", $this->createdAt);
         $stmt->bindParam(":updatedAt", $this->updatedAt);
-        $stmt->bindParam(":locationId", $this->locationId);
+        $stmt->bindParam(":serviceHostPort", $this->serviceHostPort);
+        $stmt->bindParam(":bodyText", $this->bodyText);
 
         // execute query
         if($stmt->execute()){
         return true;
         }
-
         return false;
     }
     //R

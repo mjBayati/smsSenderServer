@@ -6,16 +6,15 @@ require_once "../vendor/autoload.php";
 
 
 $request_uri = explode('?', $_SERVER['REQUEST_URI']);
+
 $data = [
     "body" => $_GET['body'],
     "number" => $_GET['number']
 ];
 
-
 // Route it up!
 switch ($request_uri[0]) {
     case '/sms/send/':
-
         // $redis = new Redis(); 
         // $redis->connect('127.0.0.1', 6379);    
         MainApiController::addItem(json_encode($data));
@@ -27,8 +26,7 @@ switch ($request_uri[0]) {
         break;
 }
 
-sleep(5);
 
-MainApiController::handleSendingMails();
+// MainApiController::handleSendingMails();
 
 ?>

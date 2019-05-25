@@ -9,7 +9,7 @@ class CurlService {
 
         // set URL and other appropriate options
         curl_setopt($ch, CURLOPT_URL, $host);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -17,11 +17,12 @@ class CurlService {
 
         // grab URL and pass it to the browser
         $result = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         // close cURL resource, and free up system resources
         curl_close($ch);
 
-        return json_encode($result);
+        return $httpcode;
         // phpinfo();
     }
 }
