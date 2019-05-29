@@ -1,11 +1,14 @@
 <?php
+
+
 class PhonesData{
 
     // Connection instance
     private $connection;
 
     // table name
-    private $table_name = "PhoneNumber";
+    private $table_name = "phoneNumber";
+    private $password = "";
 
     // table columns
     public $id;
@@ -23,22 +26,31 @@ class PhonesData{
     
     public function create(){
         // query to insert record
+
+        $mysqli = new mysqli("localhost", "root", $this->password, "mydb");
+
         $query = "INSERT INTO
-            " . $this->table_name . "
-        SET id=:id, 
-        number=:number, status=:status, createdAt=:createdAt , updatedAt=:updatedAt, serviceHostPort=:serviceHostPort, 
-        bodyText=:bodyText";
+            " . $this->table_name . " (id,number, status, bodyText, createdAt, updatedAt, serviceHostPort)
+        VALUES (
+        ".$this->id.", 
+        ".$this->number.",
+        ".$this->status.",
+        ". $this->bodyText .",
+        " .$this->createdAt. ",
+        " .$this->updatedAt .",
+        " . $this->serviceHostPort .");";
 
         // prepare query
         $stmt = $this->connection->prepare($query);
 
         // // sanitize
-        // $this->id=htmlspecialchars(strip_tags($this->number));
-        // $this->number=htmlspecialchars(strip_tags($this->number));
-        // $this->condition=htmlspecialchars(strip_tags($this->condition));
-        // $this->createdAt=htmlspecialchars(strip_tags($this->createdAt));
-        // $this->updatedAt=htmlspecialchars(strip_tags($this->updatedAt));
-        // $this->locationId=htmlspecialchars(strip_tags($this->locationId));
+        $this->id=htmlspecialchars(strip_tags($this->id));
+        $this->number=htmlspecialchars(strip_tags($this->number));
+        $this->status=htmlspecialchars(strip_tags($this->status));
+        $this->createdAt=htmlspecialchars(strip_tags($this->createdAt));
+        $this->updatedAt=htmlspecialchars(strip_tags($this->updatedAt));
+        $this->serviceHostPort=htmlspecialchars(strip_tags($this->serviceHostPort));
+        $this->serviceHostPort=htmlspecialchars(strip_tags($this->bodyText));
 
         // bind values
         $stmt->bindParam(":id", $this->id);
@@ -49,11 +61,23 @@ class PhonesData{
         $stmt->bindParam(":serviceHostPort", $this->serviceHostPort);
         $stmt->bindParam(":bodyText", $this->bodyText);
 
+       
+
+
+        
+
         // execute query
-        if($stmt->execute()){
-        return true;
+        // if($stmt->execute()){
+        // return true;
+        // }
+        // return false;
+        if($mysqli->query($query)){
+            // echo "Records added successfully.";
+            return true;
+        } else{
+            echo "ERROR: Could not able to execute $query. " . mysqli_error($this->connection);
+            return false;
         }
-        return false;
     }
     //R
     public function read(){
@@ -97,32 +121,28 @@ class PhonesData{
     //U
     public function update(){
         // update query
-    $query = "UPDATE
-    " . $this->table_name . "
-        SET
-            condition = :condition,
-            updatedAt = :updatedAt
-        WHERE
-            number = :number";
+        $mysqli = new mysqli("localhost", "root", $this->password, "mydb");
 
-        // prepare query statement
-        $stmt = $this->conn->prepare($query);
+        $query = "UPDATE
+        " . $this->table_name . "
+            SET
+                status =" . $this->status . ",
+                updatedAt=" . $this->updatedAt . ",
+                serviceHostPort=" . $this->serviceHostPort . "
+            WHERE
+                id=" . $this->id . ";";
 
-        // sanitize
-        $this->number=htmlspecialchars(strip_tags($this->number));
-        $this->condition=htmlspecialchars(strip_tags($this->condition));
-        $this->number=htmlspecialchars(strip_tags($this->updatedAt));
+       
+        // echo $query;
 
-        // bind new values
-        $stmt->bindParam(':number', $this->number);
-        $stmt->bindParam(':condition', $this->condition);
-        $stmt->bindParam(':updatedAt', $this->updatedAt);
-
-        // execute the query
-        if($stmt->execute()){
-        return true;
+        if($mysqli->query($query)){
+            // echo "Records updated successfully.";
+            return true;
+        } else{
+            echo "ERROR: Could not able to execute $query. " . mysqli_error($this->connection);
+            return false;
         }
-        return false;
+
     }
     //D
     public function delete(){}

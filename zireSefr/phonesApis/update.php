@@ -7,27 +7,25 @@
     header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
     
     // include database and object files
-    include_once '../config/database.php';
+    include_once '../config/dbClass.php';
     include_once '../entities/phoneNumber.php';
-    
+   
+function updateRecord($data, $status, $receiverPort){
     // get database connection
-    $database = new Database();
+    $database = new DBClass();
     $db = $database->getConnection();
     
     // prepare product object
     $phonesData = new PhonesData($db);
     
-    // get id of product to be edited
-    $data = json_decode(file_get_contents("php://input"));
     
-    // set ID property of product to be edited
-    $phonesData->number = $data->number;
-    
+    $data = json_decode($data, true);
+
     // set product property values
-    $phonesData->number = $data->number;
-    $phonesData->condition = $data->condition;
-    $phonesData->locationId = $data->locationId;
-    $phonesData->updatedAt = date('Y-m-d H:i:s');
+    $phonesData->id = $data["id"];
+    $phonesData->status = '"' . $status . '"';
+    $phonesData->serviceHostPort = $receiverPort;
+    $phonesData->updatedAt = '"' . date('Y-m-d H:i:s') .'"';
     
     // update the product
     if($phonesData->update()){
@@ -36,7 +34,7 @@
         http_response_code(200);
     
         // tell the user
-        echo json_encode(array("message" => "sms status is updated."));
+        // echo json_encode(array("message" => "sms status is updated."));
     }
     
     // if unable to update the product, tell the user
@@ -48,4 +46,5 @@
         // tell the user
         echo json_encode(array("message" => "Unable to update sms condition."));
     }
+}
 ?>

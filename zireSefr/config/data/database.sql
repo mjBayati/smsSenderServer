@@ -3,9 +3,9 @@ CREATE DATABASE mydb;
 
 use mydb;
 
-CREATE TABLE "PhoneNumber" (
+CREATE TABLE "PhoneNumber"(
   "id" INT NOT NULL PRIMARY KEY, 
-  "number" INT NOT NULL,
+  "number" varchar(60) NOT NULL,
   "status" varchar(50),
   "bodyText" varchar(250),
   "createdAt" datetime NOT NULL,

@@ -14,6 +14,7 @@ class DBClass {
         $this->connection = null;
 
         try{
+            
             $this->connection = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->database, $this->username, $this->password);
 
             $this->connection->exec("set names utf8");

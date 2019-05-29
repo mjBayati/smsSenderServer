@@ -27,6 +27,6 @@ switch ($request_uri[0]) {
 }
 
 
-// MainApiController::handleSendingMails();
+MainApiController::handleSendingMails();
 
 ?>

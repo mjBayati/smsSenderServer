@@ -2,7 +2,8 @@
 
 require "redisService.php";
 require "CurlService.php";
-require "../phonesApis/create.php";
+require_once "../phonesApis/create.php";
+require_once "../phonesApis/update.php";
 
 class MainApiController{
     private $redisDb;
@@ -15,8 +16,6 @@ class MainApiController{
 
         if(self::$lastFlag == true){
             $finalDataObject = RedisServices::addNewItem($item);
-
-
         }
         else{
             RedisServices::intiRedis();
@@ -26,36 +25,53 @@ class MainApiController{
         //add record to database
         creatNewRecord($finalDataObject);
     }
+
+
     public static function handleSendingMails(){
         // sleep(5);
 
         $redisData = null;
         $client = new Predis\Client();
         $result = null;    
+ 
+        // $redisData = RedisServices::getNewItemFromQueue($client);
+        // echo json_encode($redisData);
 
-        $redisData = RedisServices::getNewItemFromQueue($client);
-        echo json_encode($redisData);
+        while(true){
+            sleep(1);
+            $redisData = RedisServices::getNewItemFromQueue($client);
+            
+            if ($redisData == null)
+                break;
+                        
 
-        // while(true){
-        //     $redisData = RedisServices::getNewItemFromQueue($client);
+            $result;
+             try{
+                $result = CurlService::send('localhost:81', $redisData);
+                updateRecord($redisData, "message sending", 81);
+                RedisServices::incNumberOfSendedSmsByThisPort(81);
             
-        //     if ($redisData == null)
-        //         break;
-            
-        //     echo json_encode($redisData);
-        //     // sending sms's 
-        //     $result;
-        //      try{
-        //         $result = CurlService::send('localhost:81', $redisData);
-        //         if($result == 400){
-        //             throw new Exception('error on receiver');
-        //         }
-        //     }catch(Exception $e){
-        //         $result = CurlService::send('localhost:82', $redisData);                   
-        //         if($result == 400){
-        //             self::addItem($redisData);
-        //         }
-        //     }
-        // }
+                if($result == 400){
+                    RedisServices::incNumberOfFaultByThisPort(81);
+                    throw new Exception('error on receiver');
+                }
+                updateRecord($redisData, "message sent", 81);
+            }catch(Exception $e){
+                $result = CurlService::send('localhost:82', $redisData);
+                updateRecord($redisData, "message resent", 82);                   
+                RedisServices::incNumberOfSendedSmsByThisPort(82);
+
+                if($result == 400){
+                    RedisServices::addExitingItemToQueueAgin($redisData);
+                    updateRecord($redisData, "message pending", 82);
+                    RedisServices::incNumberOfFaultByThisPort(82);
+                }else{
+                    updateRecord($redisData, "message sent", 82);
+                }
+            }
+        }
+
+        echo "the Queue size: ";
+        echo $client->llen('smsList');
     }   
 }
