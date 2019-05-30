@@ -33,17 +33,19 @@ class MainApiController{
         $redisData = null;
         $client = new Predis\Client();
         $result = null;    
- 
+        
+
         // $redisData = RedisServices::getNewItemFromQueue($client);
         // echo json_encode($redisData);
 
         while(true){
-            sleep(1);
+            sleep(5);
             $redisData = RedisServices::getNewItemFromQueue($client);
             
             if ($redisData == null)
                 break;
                         
+            
 
             $result;
              try{
@@ -75,3 +77,5 @@ class MainApiController{
         echo $client->llen('smsList');
     }   
 }
+
+?>
