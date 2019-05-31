@@ -4,6 +4,7 @@ require "redisService.php";
 require "CurlService.php";
 require_once "../phonesApis/create.php";
 require_once "../phonesApis/update.php";
+require_once "../phonesApis/read.php";
 
 class MainApiController{
     private $redisDb;
@@ -39,7 +40,7 @@ class MainApiController{
         // echo json_encode($redisData);
 
         while(true){
-            sleep(5);
+            sleep(20);
             $redisData = RedisServices::getNewItemFromQueue($client);
             
             if ($redisData == null)
@@ -75,7 +76,11 @@ class MainApiController{
 
         echo "the Queue size: ";
         echo $client->llen('smsList');
-    }   
+    }  
+    
+    public static function readTenMostRepeated(){
+        return readTenMostUsedNumber();
+    }
 }
 
 ?>

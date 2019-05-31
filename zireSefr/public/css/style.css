@@ -4,11 +4,41 @@ body{
   overflow-x: hidden;
 }
 
-input{
-    border: none transparent;
-    outline: none;
+/* #mainContentWrapper{
+  background-color: white;
+} */
+
+
+#headerPart{
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.5rem;
 }
 
+#allSendedSmsPart{
+  margin-top: 1.5rem;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#hostTablePart{
+  margin-top: 1.5rem;
+}
+
+#mostSendedSmsNumbersPart{
+  margin-top: 1.5rem;
+}
+
+#mostSendedSmsNumbersPart #mostSendedHeaderPart{
+  font-family: 'Courier New', Courier, monospace;    
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+#mostSendedSmsNumbersPart #numberSection{
+  font-size: 1rem;
+  border-top: 1px solid gray;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
 /* ---------------dynamic classes -------------------------*/
 
 

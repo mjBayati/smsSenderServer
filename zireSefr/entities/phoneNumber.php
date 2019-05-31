@@ -81,12 +81,29 @@ class PhonesData{
     }
     //R
     public function read(){
-        $query = "SELECT c.id, c.createdAt, c.updatedAt, c.number, c.location_id, c.condition FROM" . $this->table_name . "AS c";
-        $stmt = $this->connection->prepare($query);
+        
 
-        $stmt->execute();
+        $mysqli = new mysqli("localhost", "root", $this->password, "mydb");
 
-        return $stmt;
+        if ($mysqli->connect_error) {
+            die("Connection failed: " . $mysqli->connect_error);
+        } 
+
+        $query = "select number, count(number) c from " . $this->table_name .
+        " group by number order by c desc limit 10;";
+
+
+        $stmt = $mysqli->query($query);
+        
+
+        if($stmt){
+            // echo "read ten most repeated successfully.";
+            return $stmt;
+        } else{
+            echo "ERROR: Could not able to execute $query. " . mysqli_error($this->connection);
+            return $stmt;
+        }
+
     }
 
     public function readOne($number){

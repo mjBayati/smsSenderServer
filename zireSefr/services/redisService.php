@@ -78,7 +78,7 @@ class RedisServices{
     public static function incNumberOfSendedSmsByThisPort($hostPortNumber){
         $checker = "is" . $hostPortNumber . "seted";
         $client = new Predis\Client();
-        if(!$client->get('$checker')){
+        if(!$client->get($checker)){
             $client->set($checker, true);
             $client->set($hostPortNumber, 1);
         }
@@ -91,7 +91,7 @@ class RedisServices{
         $checker = "is" . $hostPortNumber . "Faultseted";
         $redisId = $hostPortNumber . "FaultNumber";
         $client = new Predis\Client();
-        if(!$client->get('$checker')){
+        if(!$client->get($checker)){
             $client->set($checker, true);
             $client->set($redisId, 1);
         }
